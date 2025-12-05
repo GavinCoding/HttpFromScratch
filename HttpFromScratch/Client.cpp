@@ -10,10 +10,10 @@
 
 #define PORT 80   //communication over port 80 -> web Server port
 
-const char szHost[] = "www.google.com"; //will hold IP address
+const char szHost[] = "127.0.0.1"; //will hold IP address
 
-int main(const int argc, const char* argv[]) {
 
+SOCKET connectClient(char hostName[]) {
 	//startup stuff
 	WSAData wsaData;
 	WORD DllVersion = MAKEWORD(2, 1);   //Version is represented as two bytes. one byte for both major and minor versions. (2.2  is newest version)
@@ -33,7 +33,7 @@ int main(const int argc, const char* argv[]) {
 	}
 
 	//Get Server info. Using HOSTENT to store/gather host info
-	HOSTENT* host = gethostbyname(szHost);
+	HOSTENT* host = gethostbyname(hostName);
 	if (host == nullptr)
 	{
 		std::cerr << "get host failed";
@@ -56,42 +56,8 @@ int main(const int argc, const char* argv[]) {
 		ExitProcess(EXIT_FAILURE);
 	}
 
-	//Send Information
-	const char szMsg[] = "HEAD / HTTP/1.0\r\n\r\n";
-	if (!send(sock, szMsg, strlen(szMsg), 0))
-	{
-		std::cerr << "send failed";
-		ExitProcess(EXIT_FAILURE);
-	}
-
-
-	//ready to receive data. Lets create some buffers to read form. Large to rpevent accidental overflow
-	//const int size = 4096;  //for consistency
-	char szBuffer[4096];
-	char szTemp[4096];
-	ZeroMemory(&szTemp, sizeof(szTemp));
-	ZeroMemory(&szBuffer, sizeof(szBuffer));
-	int bytesReceived;
-	int bufferIndex = 0;
-	while((bytesReceived = recv(sock, szTemp, 4096 - 1, 0)) > 0)
-	{
-		// Add a null terminator to szTemp to make it a valid string for strncat
-		szTemp[bytesReceived] = '\0';
-		// Concatenate safely using strncat
-		// strncat will only copy up to (4096 - bufferIndex - 1) bytes
-		// to prevent overflow.
-		strncat(szBuffer, szTemp, 4096 - bufferIndex - 1);
-
-		// Update the index to reflect the new size of szBuffer
-		bufferIndex += bytesReceived;
-	}
-
-	printf("%s\n", szBuffer);
-
-	closesocket(sock);
-	getchar();	//waits for char so it won't close/terminat right away
-
-	ExitProcess(EXIT_SUCCESS);
+	
+	return sock;
 }
 
 // Tips for Getting Started: 
