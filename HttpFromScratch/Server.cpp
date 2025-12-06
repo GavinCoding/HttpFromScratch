@@ -13,7 +13,7 @@
 const char severAddr[] = "127.0.0.1";
 
 
-SOCKET startServer() {
+int main() {
 	SOCKET listenSocket = INVALID_SOCKET; 
 
 
@@ -64,13 +64,42 @@ SOCKET startServer() {
 		WSACleanup();
 		ExitProcess(EXIT_FAILURE);
 	}
+	
+	if (listen(listenSocket, SOMAXCONN) == SOCKET_ERROR) {
+		std::cerr << "Listen failed";
+		closesocket(listenSocket);
+		WSACleanup();
+		ExitProcess(EXIT_FAILURE);
+	}
+
+	SOCKET clientSocket = INVALID_SOCKET;
+
+
+	char buffer[4096];
+	ZeroMemory(&buffer, sizeof(buffer));
+	// Accept a client socket
+	while (true)
+	{
+		clientSocket = accept(listenSocket, NULL, NULL);
+		if (clientSocket == INVALID_SOCKET) {
+			std::cerr << "accept failed: " << WSAGetLastError();
+			closesocket(listenSocket);
+			WSACleanup();
+			ExitProcess(EXIT_FAILURE);
+		}
+
+		int bytes = recv(clientSocket, buffer, sizeof(buffer), 0);
+
+		std::cout << buffer;
+
+	}
+	
 
 	freeaddrinfo(results);
 
 
 
 
-
-
-	return listenSocket;	
+	return 0;
+	//return listenSocket;	
 }
