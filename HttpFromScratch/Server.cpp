@@ -4,14 +4,98 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <WinSock2.h>
 #include <stdio.h>
-#include <iostream>
 #include <stdlib.h>
 #include <ws2tcpip.h>
 #include <Windows.h>
 
+#include <iostream>
+#include <string>
+
 #define PORT "80"   //communication over port 80 -> web Server port
 const char severAddr[] = "127.0.0.1";
 
+
+class HttpRequest
+{
+	public:
+		bool requestValidity = TRUE;
+		bool expected = TRUE;
+		std::string method;
+		std::string path;
+		std::string version;
+		std::string headers;
+		std::string body;
+
+
+		//Constructor
+		HttpRequest(std::string msg)
+		{
+			//std::cout << msg << "\nExtractedBody:";
+			//check first part of MSG. Other parts may contain request type keywords
+			std::string requestWindow = msg.substr(0, 8);
+			if (!requestWindow.contains("GET"))
+			{
+				this->expected = FALSE;   //We are onyl eexpecting GET results
+				if (requestWindow.contains("POST"))
+					setMethod("POST");
+				else if (requestWindow.contains("PUT"))
+					setMethod("PUT");
+				else if (requestWindow.contains("PATCH"))
+					setMethod("PATCH");
+				else if (requestWindow.contains("DELETE"))
+					setMethod("DELETE");
+				else if (requestWindow.contains("HEAD"))
+					setMethod("HEAD");
+				else if (requestWindow.contains("OPTIONS"))
+					setMethod("OPTIONS");
+				else if (requestWindow.contains("CONNECT"))
+					setMethod("CONNECT");
+				else if (requestWindow.contains("TRACE"))
+					setMethod("TRACE");
+				else									
+					this->requestValidity = FALSE;					//NOT A VALID HTTP MSG
+
+			}
+			else
+			{
+				setMethod("GET");
+			}
+			//next Get Path(Request-URI)
+			setPath( msg.substr( method.length(), msg.find(" HTTP") - method.length() ) );
+
+			setVersion(msg.substr(msg.find("HTTP"), 8));
+
+			//Use \n (end of request line) as start delimiter and \n\r (end of Request Header) to extract Request Header
+			setHeader( msg.substr(msg.find("\n"), (msg.find("\r\n") - msg.find("\n")) ));
+
+			//std::cout << msg.substr( msg.find("\r\n\r\n") + 4, msg.length() - msg.find("\r\n\r\n"));
+			setBody( msg.substr(msg.find("\r\n\r\n") + 4, msg.length() - msg.find("\r\n\r\n")) );
+		}
+
+		void setMethod(std::string method)
+		{
+			this->method= method;
+			//std::cout << this->method;
+		}
+		void setPath(std::string path)
+		{
+			this->path = path;
+		}
+		void setVersion(std::string version)
+		{
+			this->version = version;
+		}
+		void setHeader(std::string headers)
+		{
+			this->headers = headers;
+		}
+		void setBody(std::string body)
+		{
+			this->body = body;
+		}
+		
+		
+};
 
 int main() {
 	SOCKET listenSocket = INVALID_SOCKET; 
@@ -77,6 +161,11 @@ int main() {
 
 	char buffer[4096];
 	ZeroMemory(&buffer, sizeof(buffer));
+
+	char response[4096];
+	ZeroMemory(&response, sizeof(response));
+
+	std::string msg;
 	// Accept a client socket
 	while (true)
 	{
@@ -89,8 +178,13 @@ int main() {
 		}
 
 		int bytes = recv(clientSocket, buffer, sizeof(buffer), 0);
+		
+		msg.append(buffer, bytes);
 
-		std::cout << buffer;
+		HttpRequest request(msg);
+
+		ZeroMemory(&msg, sizeof(msg));
+		//getchar();
 
 	}
 	
@@ -103,3 +197,34 @@ int main() {
 	return 0;
 	//return listenSocket;	
 }
+
+	//std::string header;
+	//	std::string status;
+	//		std::string requestType;
+	//size_t pos;
+
+	////get header
+
+	//pos = request.find("\r\n\r\n");
+	//header = request.substr(0, pos);
+	////std::cout << "HEADER-> " << header << " <-HEADER";
+
+	////get status
+	//pos = header.find("\r\n");
+	//status = header.substr(0, pos);
+
+	////if Header is not GET Request then we HCF'
+	//if (status.contains("GET"))
+	//{
+	//	pos = status.find("GET");
+	//	requestType = status.substr(0, pos + 3);
+	//
+	//}
+	//else
+	//{
+	//	printf("GET Not found.\n");
+	//	//Dont throw error return 404. Support for other request types later
+
+	//}
+	////Get Request type
+	
