@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <ws2tcpip.h>
 #include <Windows.h>
+#include <fstream>
 
 #include <iostream>
 #include <string>
@@ -30,7 +31,7 @@ class HttpRequest
 		//Constructor
 		HttpRequest(std::string msg)
 		{
-			//std::cout << msg << "\nExtractedBody:";
+			std::cout << msg << "\nExtractedBody:";
 			//check first part of MSG. Other parts may contain request type keywords
 			std::string requestWindow = msg.substr(0, 8);
 			if (!requestWindow.contains("GET"))
@@ -75,7 +76,7 @@ class HttpRequest
 		void setMethod(std::string method)
 		{
 			this->method= method;
-			//std::cout << this->method;
+			//std::cout << this->method;7
 		}
 		void setPath(std::string path)
 		{
@@ -96,7 +97,33 @@ class HttpRequest
 		
 		
 };
+class HttpResponse
+{
+	const std::string version = "HTTP/1.1";
+	public:
+		std::string status;
+		std::string body;
 
+
+		
+
+		// Status depends on Request info
+		
+		void setStatus(std::string status)
+		{
+			this->status = status;
+			//std::cout << this->method;
+		}
+		void setBody(std::string body)
+		{
+			this->body = body;
+		}
+		std::string toString() const
+		{
+			return "NULL";
+		}
+
+};
 int main() {
 	SOCKET listenSocket = INVALID_SOCKET; 
 
@@ -182,10 +209,17 @@ int main() {
 		msg.append(buffer, bytes);
 
 		HttpRequest request(msg);
+		HttpResponse response = BuildResponse(request);
 
+
+		//Build Request
+		///If request->requestValidity = FALSE;    Invalid request
+		//If request->Expected  = FALSE;		   No reason to send Non-Get return ???
+		//Search for URI If file not there	   ->  404.
+		
+		
 		ZeroMemory(&msg, sizeof(msg));
 		//getchar();
-
 	}
 	
 
@@ -197,34 +231,73 @@ int main() {
 	return 0;
 	//return listenSocket;	
 }
+HttpResponse BuildResponse(HttpRequest request)
+{
+	HttpResponse temp;
 
-	//std::string header;
-	//	std::string status;
-	//		std::string requestType;
-	//size_t pos;
+	//Unsuccessful requests
+	if (request.requestValidity == false)
+	{
+		temp.setStatus("400");   //code 400 -> Bad Request
+	}
+	else if (request.expected == false)
+	{
+		temp.setStatus("405");	//code 405 -> Method Not allowed. Potentially send them to another page 
+		//if not expecterd return METHOD NOT ALLOWED
+	}
+	if (!fileExists(request.path))
+	{
+		//return 404
+		
+	}
+	else  
+	{
+		//File exists
+		// things can go smoothly
+		std::fstream str(request.path, std::ios::in);
+		std::string resonseBody;
 
-	////get header
+		str >> resonseBody;
+		
+		temp.setBody(resonseBody);
+	}
+	return temp.toString();
 
-	//pos = request.find("\r\n\r\n");
-	//header = request.substr(0, pos);
-	////std::cout << "HEADER-> " << header << " <-HEADER";
 
-	////get status
-	//pos = header.find("\r\n");
-	//status = header.substr(0, pos);
 
-	////if Header is not GET Request then we HCF'
-	//if (status.contains("GET"))
-	//{
-	//	pos = status.find("GET");
-	//	requestType = status.substr(0, pos + 3);
-	//
-	//}
-	//else
-	//{
-	//	printf("GET Not found.\n");
-	//	//Dont throw error return 404. Support for other request types later
+	//Successful requests
+	
+	/*	200 OK: 
+			This is the most prevalent and ideal response for a successful GET request. 
+			It signifies that the request was processed without issues, and the requested resource (e.g., a webpage, JSON data) is included in the response body.
+		204 No Content:
+			This code indicates that the request was successful, but there is no content to return in the response body. 
+			This is useful when a GET request is made to check for the existence of a resource or to trigger a server-side action that doesn't require a data response.
+		304 Not Modified: 
+			This code is a redirection message, but it's often considered a successful outcome for a GET request when caching is involved.
+			It tells the client that the requested resource has not been modified since the last request, allowing the client to use its cached version, saving bandwidth and improving performance.*/
+	/*
+	
+	* 
+		Handle immediate errors then get into nitty gritty URI availability checking/returning system
+	 bool requestValidity = TRUE;
+		bool expected = TRUE;
+	*/
 
-	//}
-	////Get Request type
+
+	return temp;
+}
+
+
+bool fileExists(const std::string& filename) {
+	std::ifstream file(filename);
+	return file.is_open();
+}
+
+/*
+	To-do
+		more robust error handling with lookup table. String to int. int to String for debug. Debug config only?
+
+*/
+	
 	
