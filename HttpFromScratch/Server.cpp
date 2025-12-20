@@ -35,8 +35,9 @@ class HttpRequest
 		HttpRequest(std::string msg)
 		{
 			
+			size_t eorl = msg.find("\r\n");//end of request line
 			//check first part of MSG. Other parts may contain request type keywords
-			std::string requestWindow = msg.substr(0, 8);
+			std::string requestWindow = msg.substr(0, eorl);
 			if (!requestWindow.contains("GET"))
 			{
 				this->expected = FALSE;   //We are onyl eexpecting GET results
@@ -64,8 +65,17 @@ class HttpRequest
 			{
 				setMethod("GET");
 			}
+
+
+			size_t firstspace = requestWindow.find(" ");
+			size_t secondspace = requestWindow.find(" ", firstspace + 1);
 			//next Get Path(Request-URI)
-			setPath( msg.substr( method.length() + 1, msg.find(" HTTP") - method.length() ) );
+			//std::cout << "REquest path is ->" << msg.substr(method.length() + 1, msg.find(" HTTP") - method.length()-1) << "<-";
+			setPath( msg.substr(firstspace + 1, secondspace - firstspace -1 ) );
+
+			//Normalize root
+			if (path.empty())
+				path = "/";
 
 			setVersion(msg.substr(msg.find("HTTP"), 8));
 
@@ -161,7 +171,7 @@ HttpResponse BuildResponse(HttpRequest request)
 		temp.setReason("Method Not Allowed");
 		//if not expecterd return METHOD NOT ALLOWED
 	}
-	else if (!fileExists(request.path))
+	else if ( (!fileExists(request.path)) &&  request.path !=  "/") 
 	{
 		//quick test
 		
@@ -179,7 +189,16 @@ HttpResponse BuildResponse(HttpRequest request)
 		temp.setStatus("200");
 		temp.setReason("OK");
 
-		std::ifstream file(request.path);
+		std::ifstream file;
+		if (request.path == "/")
+		{
+			file.open("index.html");
+		}
+		else
+		{
+			file.open(request.path);
+		}
+		
 		std::stringstream buffer;
 
 		buffer << file.rdbuf();
@@ -190,7 +209,7 @@ HttpResponse BuildResponse(HttpRequest request)
 		file.close();
 
 
-		std::cout << "\n\n\nResponse Body: \n" << resonseBody << "\n\n\n";
+		//std::cout << "\n\n\nResponse Body: \n" << resonseBody << "\n\n\n";
 		temp.setBody(resonseBody);
 
 		size_t contentSize = resonseBody.size();
@@ -318,18 +337,21 @@ int main() {
 		}
 
 		HttpRequest request(msg);
+		std::cout << "HTTP REQUEST: \n" << msg;
+
 		HttpResponse response = BuildResponse(request);
 
 		std::string responseStr = response.toString();
+		std::cout << "\nHTTP Response: \n" << responseStr;
 
 		send(clientSocket, responseStr.c_str(), responseStr.size(), 0);
 
-		closesocket(clientSocket);
 	}
 	
 
 	freeaddrinfo(results);
-
+	closesocket(listenSocket);
+	closesocket(clientSocket);
 
 
 

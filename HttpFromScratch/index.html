@@ -1,11 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello, World!</title>
+    <meta charset="UTF-8" />
+    <title>Gavin Roake | Software Engineer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Gavin Roake — Software Engineer specializing in systems programming, AR/VR, networking, and real-time data integration." />
+
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #020617;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: rgba(255,255,255,0.06);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, #020617, #020617 60%, #020617);
+            color: var(--text);
+            padding: 32px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        header {
+            margin-bottom: 48px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin: 0;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin-top: 6px;
+            font-size: 16px;
+        }
+
+        nav {
+            margin-top: 16px;
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+            nav a {
+                color: var(--accent);
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+        section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 6px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        ul {
+            margin: 12px 0 0 18px;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .tag {
+            font-size: 12px;
+            padding: 6px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 999px;
+            color: var(--muted);
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        a.email {
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Hello, World!</h1>
+    <div class="container">
+
+        <!-- HEADER -->
+        <header>
+            <h1>Gavin Roake</h1>
+            <div class="subtitle">
+                Software Engineer — Systems, Networking, AR/VR, Real-Time Data
+            </div>
+
+            <nav>
+                <a href="#education">Education</a>
+                <a href="#experience">Experience</a>
+                <a href="#projects">Projects</a>
+                <a href="#skills">Skills</a>
+                <a href="#misc">Misc</a>
+            </nav>
+        </header>
+
+        <!-- EDUCATION -->
+        <section id="education">
+            <div class="section-title">Education</div>
+            <div class="card">
+                <strong>University of Central Florida</strong>
+                <div class="muted">B.S. in Computer Science — Aug 2021 – May 2025</div>
+                <div class="muted">GPA: 3.6 · Orlando, FL</div>
+            </div>
+        </section>
+
+        <!-- EXPERIENCE -->
+        <section id="experience">
+            <div class="section-title">Experience</div>
+
+            <div class="card">
+                <strong>KBR — Software Development Intern</strong>
+                <div class="muted">May 2024 – May 2025 · Orlando, FL</div>
+
+                <ul>
+                    <li>
+                        Built real-time data parsers and communication modules integrated with an over-the-line hardware bus, enabling reliable data exchange across distributed training systems.
+                    </li>
+                    <li>
+                        Developed simulation tools, augmented reality applications, and network-enabled software supporting interoperability across multiple programs.
+                    </li>
+                    <li>
+                        Implemented full-stack and network-driven features using C++, C#, JavaScript (Node.js), HTML, and CSS.
+                    </li>
+                    <li>
+                        Built interactive gauge clusters consuming live and recorded telemetry, improving synchronization between multiple system components.
+                    </li>
+                    <li>
+                        Sole developer of an AR training application using Unity and MRTK, integrating real-time networked data while maintaining 30+ FPS and reducing model load times by 40%.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- PROJECTS -->
+        <section id="projects">
+            <div class="section-title">Projects</div>
+
+            <div class="card">
+                <strong>DRIFT — VR Drone Telemetry Visualization</strong>
+                <div class="muted">C#, Unity · May 2025</div>
+                <ul>
+                    <li>
+                        Led development of a VR application reconstructing drone flight paths using live and recorded telemetry data.
+                    </li>
+                    <li>
+                        Designed the core data pipeline including packet parsing, multi-drone ID handling, and centralized data management.
+                    </li>
+                    <li>
+                        Implemented real-time mapping and synchronized playback for live drone visualization.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <strong>GitCord</strong>
+                <div class="muted">JavaScript, Python · Sep 2024</div>
+                <ul>
+                    <li>
+                        Developed a Discord bot integrating GitHub activity directly into Discord workflows.
+                    </li>
+                    <li>
+                        ShellHacks 2024 Finalist.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <strong>C++ HTTP Server</strong>
+                <div class="muted">C++, Winsock · Nov 2025</div>
+                <ul>
+                    <li>
+                        Built a lightweight HTTP/1.1 server from scratch using raw socket programming without external libraries.
+                    </li>
+                    <li>
+                        Implemented a custom HTTP request parser and standards-compliant response generator.
+                    </li>
+                    <li>
+                        Designed the system to be fully self-contained, demonstrating deep understanding of protocol fundamentals.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SKILLS -->
+        <section id="skills">
+            <div class="section-title">Technical Skills</div>
+            <div class="card">
+                <div class="tags">
+                    <span class="tag">C++</span>
+                    <span class="tag">C</span>
+                    <span class="tag">C#</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">JavaScript</span>
+                    <span class="tag">TypeScript</span>
+                    <span class="tag">HTML / CSS</span>
+                    <span class="tag">SQL</span>
+                    <span class="tag">Unity</span>
+                    <span class="tag">MRTK</span>
+                    <span class="tag">Angular</span>
+                    <span class="tag">Flask</span>
+                    <span class="tag">Winsock</span>
+                    <span class="tag">BSD Sockets</span>
+                    <span class="tag">TCP / UDP</span>
+                    <span class="tag">Linux</span>
+                    <span class="tag">Windows</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- MISC -->
+        <section id="misc">
+            <div class="section-title">Miscellaneous</div>
+            <div class="card">
+                <strong>Long-Distance Thru Hiker</strong>
+                <ul>
+                    <li>
+                        Completed the 2,190-mile Appalachian Trail and 2,650-mile Pacific Crest Trail.
+                    </li>
+                    <li>
+                        Demonstrated resilience, long-term planning, solo decision-making, and risk assessment in high-pressure environments.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <div>
+                Panama City, FL ·
+                <a class="email" href="mailto:gavinroak03@gmail.com">gavinroak03@gmail.com</a>
+            </div>
+            <div style="margin-top:8px">
+                <a href="https://github.com/GavinCoding" class="email">GitHub</a> ·
+                <a href="https://linkedin.com/in/gavin-roake" class="email">LinkedIn</a>
+            </div>
+        </footer>
+
+    </div>
 </body>
 </html>
+
