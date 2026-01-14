@@ -7,11 +7,18 @@ SERVER_BIN="server"
 
 echo "=== Building HTTP server ==="
 
-g++ server.cpp -O2 -std=c++20 -o "$SERVER_BIN"
+g++ Server.cpp -O2 -std=c++20 -o "$SERVER_BIN"
 
 echo "=== Deploying binary ==="
-sudo cp "$SERVER_BIN" "$RUNTIME_DIR/$SERVER_BIN"
+echo "Stopping Server..."
+sudo systemctl stop http-server
+
+echo "Deploying binary..."
+echo cp "$SERVER_BIN" "$RUNTIME_DIR/$SERVER_BIN"
 sudo chown gavincoding:gavincoding "$RUNTIME_DIR/$SERVER_BIN"
+
+echo "Starting Server..."
+sudo systemctl start http-server
 
 BIN_UPDATED=true
 
