@@ -34,9 +34,9 @@ class HttpRequest
 		//Constructor
 		HttpRequest(std::string msg)
 		{
-			
 			size_t eorl = msg.find("\r\n");//end of request line
 			//check first part of MSG. Other parts may contain request type keywords
+
 			std::string requestWindow = msg.substr(0, eorl);
 			if (!requestWindow.contains("GET"))
 			{
@@ -108,7 +108,10 @@ class HttpRequest
 		{
 			this->body = body;
 		}
-		
+		bool isEmpty(std::string msg)
+		{
+			return msg.empty();
+		}
 		
 };
 class HttpResponse
@@ -335,7 +338,8 @@ int main() {
 			msg.append(buffer, bytes);
 			if (msg.find("\r\n\r\n") != std::string::npos) break;
 		}
-
+		if (msg.empty())
+			continue;
 		HttpRequest request(msg);
 		std::cout << "HTTP REQUEST: \n" << msg;
 
