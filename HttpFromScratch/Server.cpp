@@ -168,6 +168,8 @@ int main() {
             if (msg.find("\r\n\r\n") != std::string::npos) break;
         }
 
+        if (msg.empty())
+            continue;
         HttpRequest request(msg);
         HttpResponse response = BuildResponse(request);
 
