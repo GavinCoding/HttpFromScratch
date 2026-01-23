@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Gavin Roake | Software Engineer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Gavin Roake — Software Engineer specializing in systems programming, AR/VR, networking, and real-time data integration." />
+    <meta name="description" content="Gavin Roake — Software Engineer focused on systems programming, networking, and real-time AR/VR applications." />
 
     <style>
         :root {
@@ -133,10 +133,11 @@
         <header>
             <h1>Gavin Roake</h1>
             <div class="subtitle">
-                Software Engineer — Systems, Networking, AR/VR, Real-Time Data
+                Software Engineer — Systems Programming, Networking, AR/VR, Real-Time Data
             </div>
 
             <nav>
+                <a href="#about">About</a>
                 <a href="#education">Education</a>
                 <a href="#experience">Experience</a>
                 <a href="#projects">Projects</a>
@@ -144,7 +145,23 @@
                 <a href="#misc">Misc</a>
             </nav>
         </header>
+        <!-- ABOUT -->
+        <section id="about">
+            <div class="section-title">About This Site</div>
+            <div class="card">
+                <p>
+                    This website is served by a lightweight HTTP/1.1 web server written entirely in modern C++ using raw BSD socket
+                    programming. The server was built from scratch without external networking or web frameworks, directly handling
+                    TCP connections, HTTP request parsing, and response generation. The server runs on a Raspberry Pi in my room and listens for incoming connections forwarded through my home network.
+                </p>
 
+                <p>
+                    This setup was designed as a learning-focused systems project to demonstrate a practical understanding of
+                    networking fundamentals, HTTP internals, and low-level server architecture, from socket lifecycle management
+                    to request routing and file serving.
+                </p>
+            </div>
+        </section>
         <!-- EDUCATION -->
         <section id="education">
             <div class="section-title">Education</div>
@@ -165,16 +182,16 @@
 
                 <ul>
                     <li>
-                        Built real-time data parsers and communication modules integrated with an over-the-line hardware bus, enabling reliable data exchange across distributed training systems.
+                        Built real-time data parsers and communication modules integrating with an over-the-line hardware bus, improving interoperability across distributed training systems.
                     </li>
                     <li>
-                        Developed simulation tools, augmented reality applications, and network-enabled software supporting interoperability across multiple programs.
+                        Developed simulation tools, augmented reality applications, and network-enabled software supporting multi-program training environments.
                     </li>
                     <li>
                         Implemented full-stack and network-driven features using C++, C#, JavaScript (Node.js), HTML, and CSS.
                     </li>
                     <li>
-                        Built interactive gauge clusters consuming live and recorded telemetry, improving synchronization between multiple system components.
+                        Built interactive gauge clusters consuming live and recorded telemetry, improving responsiveness and synchronization across system components.
                     </li>
                     <li>
                         Sole developer of an AR training application using Unity and MRTK, integrating real-time networked data while maintaining 30+ FPS and reducing model load times by 40%.
@@ -192,23 +209,26 @@
                 <div class="muted">C#, Unity · May 2025</div>
                 <ul>
                     <li>
-                        Led development of a VR application reconstructing drone flight paths using live and recorded telemetry data.
+                        Led development of a VR application reconstructing drone flight paths using live and recorded telemetry.
                     </li>
                     <li>
-                        Designed the core data pipeline including packet parsing, multi-drone ID handling, and centralized data management.
+                        Implemented the core data pipeline, including packet parsing, multi-drone ID handling, and centralized data management.
                     </li>
                     <li>
-                        Implemented real-time mapping and synchronized playback for live drone visualization.
+                        Engineered real-time mapping and synchronized playback enabling live drone visualization.
+                    </li>
+                    <li>
+                        Authored technical documentation including architecture diagrams, telemetry models, and data-flow descriptions.
                     </li>
                 </ul>
             </div>
 
             <div class="card">
-                <strong>GitCord</strong>
+                <strong>GitCord — GitHub × Discord Integration</strong>
                 <div class="muted">JavaScript, Python · Sep 2024</div>
                 <ul>
                     <li>
-                        Developed a Discord bot integrating GitHub activity directly into Discord workflows.
+                        Developed a Discord bot enabling real-time integration between GitHub events and Discord workflows.
                     </li>
                     <li>
                         ShellHacks 2024 Finalist.
@@ -218,16 +238,16 @@
 
             <div class="card">
                 <strong>C++ HTTP Server</strong>
-                <div class="muted">C++, Winsock · Nov 2025</div>
+                <div class="muted">C++, Winsock / BSD Sockets · Nov 2025</div>
                 <ul>
                     <li>
-                        Built a lightweight HTTP/1.1 server from scratch using raw socket programming without external libraries.
+                        Built a lightweight HTTP/1.1 web server from scratch using raw socket programming without external libraries.
                     </li>
                     <li>
-                        Implemented a custom HTTP request parser and standards-compliant response generator.
+                        Implemented a custom HTTP request parser handling methods, paths, and headers directly from browser traffic.
                     </li>
                     <li>
-                        Designed the system to be fully self-contained, demonstrating deep understanding of protocol fundamentals.
+                        Designed and deployed the server on a Raspberry Pi with custom networking, DNS, and Cloudflare integration.
                     </li>
                 </ul>
             </div>
@@ -240,10 +260,12 @@
                 <div class="tags">
                     <span class="tag">C++</span>
                     <span class="tag">C</span>
+                    <span class="tag">CUDA</span>
                     <span class="tag">C#</span>
                     <span class="tag">Python</span>
                     <span class="tag">JavaScript</span>
                     <span class="tag">TypeScript</span>
+                    <span class="tag">Java</span>
                     <span class="tag">HTML / CSS</span>
                     <span class="tag">SQL</span>
                     <span class="tag">Unity</span>
@@ -255,6 +277,8 @@
                     <span class="tag">TCP / UDP</span>
                     <span class="tag">Linux</span>
                     <span class="tag">Windows</span>
+                    <span class="tag">Git</span>
+                    <span class="tag">GitHub</span>
                 </div>
             </div>
         </section>
@@ -266,10 +290,13 @@
                 <strong>Long-Distance Thru Hiker</strong>
                 <ul>
                     <li>
-                        Completed the 2,190-mile Appalachian Trail and 2,650-mile Pacific Crest Trail.
+                        Completed the 2,190-mile Appalachian Trail and the 2,650-mile Pacific Crest Trail.
                     </li>
                     <li>
-                        Demonstrated resilience, long-term planning, solo decision-making, and risk assessment in high-pressure environments.
+                        Managed route planning, logistics, and solo decision-making over multi-month expeditions.
+                    </li>
+                    <li>
+                        Developed resilience, adaptability, and problem-solving skills under sustained high-pressure conditions.
                     </li>
                 </ul>
             </div>
