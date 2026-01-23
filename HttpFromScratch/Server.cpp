@@ -62,6 +62,10 @@ public:
 
         body = msg.substr(headerEnd + 4);
     }
+    bool isEmpty(std::string msg)
+    {
+        return msg.empty();
+    }
 };
 
 class HttpResponse {
