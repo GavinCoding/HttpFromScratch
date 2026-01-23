@@ -1,31 +1,30 @@
 #!/bin/bash
 set -e
 
-PROJECT_DIR="$(pwd)"
 RUNTIME_DIR="/opt/http-server"
 SERVER_BIN="server"
+SERVICE="http-server"
+
+BIN_UPDATED=false
+HTML_UPDATED=false
 
 echo "=== Building HTTP server ==="
-
 g++ Server.cpp -O2 -std=c++20 -o "$SERVER_BIN"
 
 echo "=== Deploying binary ==="
-echo "Stopping Server..."
-sudo systemctl stop http-server
+sudo systemctl stop $SERVICE
 
-echo "Deploying binary..."
-echo cp "$SERVER_BIN" "$RUNTIME_DIR/$SERVER_BIN"
+echo "Copying binary..."
+sudo cp "$SERVER_BIN" "$RUNTIME_DIR/$SERVER_BIN"
 sudo chown gavincoding:gavincoding "$RUNTIME_DIR/$SERVER_BIN"
+sudo chmod 755 "$RUNTIME_DIR/$SERVER_BIN"
 
-echo "Starting Server..."
-sudo systemctl start http-server
+echo "Applying port 80 capability..."
+sudo setcap cap_net_bind_service=+ep "$RUNTIME_DIR/$SERVER_BIN"
 
 BIN_UPDATED=true
 
 echo "=== Syncing HTML files ==="
-
-HTML_UPDATED=false
-
 for file in *.html; do
     [ -e "$file" ] || continue
 
@@ -33,22 +32,20 @@ for file in *.html; do
         echo "Adding new HTML: $file"
         sudo cp "$file" "$RUNTIME_DIR/$file"
         HTML_UPDATED=true
+    elif ! diff -q "$file" "$RUNTIME_DIR/$file" >/dev/null; then
+        echo "Updating changed HTML: $file"
+        sudo cp "$file" "$RUNTIME_DIR/$file"
+        HTML_UPDATED=true
     else
-        if ! diff -q "$file" "$RUNTIME_DIR/$file" >/dev/null; then
-            echo "Updating changed HTML: $file"
-            sudo cp "$file" "$RUNTIME_DIR/$file"
-            HTML_UPDATED=true
-        else
-            echo "No change: $file"
-        fi
+        echo "No change: $file"
     fi
 done
 
 if [ "$BIN_UPDATED" = true ] || [ "$HTML_UPDATED" = true ]; then
-    echo "=== Restarting server ==="
-    sudo systemctl restart http-server
+    echo "Restarting server..."
+    sudo systemctl start $SERVICE
 else
-    echo "=== No changes detected ==="
+    echo "No changes detected; server not restarted."
 fi
 
 echo "=== Deploy complete ==="
