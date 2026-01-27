@@ -19,51 +19,109 @@ class HttpRequest {
 public:
     bool requestValidity = true;
     bool expected = true;
+
     std::string method;
     std::string path;
     std::string version;
     std::string headers;
     std::string body;
 
-    HttpRequest(std::string msg) {
-        size_t eorl = msg.find("\r\n");
-        std::string requestWindow = msg.substr(0, eorl);
-
-        if (requestWindow.find("GET") == std::string::npos) {
-            expected = false;
-
-            if (requestWindow.find("POST") != std::string::npos) method = "POST";
-            else if (requestWindow.find("PUT") != std::string::npos) method = "PUT";
-            else if (requestWindow.find("PATCH") != std::string::npos) method = "PATCH";
-            else if (requestWindow.find("DELETE") != std::string::npos) method = "DELETE";
-            else if (requestWindow.find("HEAD") != std::string::npos) method = "HEAD";
-            else if (requestWindow.find("OPTIONS") != std::string::npos) method = "OPTIONS";
-            else if (requestWindow.find("CONNECT") != std::string::npos) method = "CONNECT";
-            else if (requestWindow.find("TRACE") != std::string::npos) method = "TRACE";
-            else requestValidity = false;
+    HttpRequest(const std::string& msg) {
+        if (msg.empty()) {
+            requestValidity = false;
+            return;
         }
-        else {
+
+        // ---- Request line ----
+        size_t eorl = msg.find("\r\n");
+        if (eorl == std::string::npos) {
+            // Incomplete request line
+            expected = false;
+            return;
+        }
+
+        std::string requestLine = msg.substr(0, eorl);
+
+        // ---- Method detection ----
+        if (requestLine.rfind("GET ", 0) == 0) {
             method = "GET";
         }
+        else {
+            expected = false;
 
-        size_t firstspace = requestWindow.find(" ");
-        size_t secondspace = requestWindow.find(" ", firstspace + 1);
+            if (requestLine.rfind("POST ", 0) == 0)    method = "POST";
+            else if (requestLine.rfind("PUT ", 0) == 0)     method = "PUT";
+            else if (requestLine.rfind("PATCH ", 0) == 0)   method = "PATCH";
+            else if (requestLine.rfind("DELETE ", 0) == 0)  method = "DELETE";
+            else if (requestLine.rfind("HEAD ", 0) == 0)    method = "HEAD";
+            else if (requestLine.rfind("OPTIONS ", 0) == 0) method = "OPTIONS";
+            else if (requestLine.rfind("CONNECT ", 0) == 0) method = "CONNECT";
+            else if (requestLine.rfind("TRACE ", 0) == 0)   method = "TRACE";
+            else {
+                requestValidity = false;
+                return;
+            }
+        }
 
-        path = requestWindow.substr(firstspace + 1,
-            secondspace - firstspace - 1);
+        // ---- Parse path ----
+        size_t firstSpace = requestLine.find(' ');
+        if (firstSpace == std::string::npos) {
+            requestValidity = false;
+            return;
+        }
+
+        size_t secondSpace = requestLine.find(' ', firstSpace + 1);
+        if (secondSpace == std::string::npos || secondSpace <= firstSpace) {
+            requestValidity = false;
+            return;
+        }
+
+        path = requestLine.substr(
+            firstSpace + 1,
+            secondSpace - firstSpace - 1
+        );
+
         if (path == "/") path = "index.html";
-        else path.erase(0, 1);
+        else if (!path.empty() && path[0] == '/') path.erase(0, 1);
 
-        version = msg.substr(msg.find("HTTP"), 8);
+        // ---- HTTP version ----
+        size_t httpPos = requestLine.find("HTTP/");
+        if (httpPos == std::string::npos || httpPos + 8 > requestLine.size()) {
+            requestValidity = false;
+            return;
+        }
 
+        version = requestLine.substr(httpPos, 8);
+
+        // ---- Headers ----
         size_t headerEnd = msg.find("\r\n\r\n");
-        headers = msg.substr(msg.find("\r\n") + 2,
-            headerEnd - msg.find("\r\n") - 2);
+        if (headerEnd == std::string::npos) {
+            // Headers not complete yet (not invalid)
+            expected = false;
+            return;
+        }
 
-        body = msg.substr(headerEnd + 4);
+        size_t headerStart = eorl + 2;
+        if (headerStart > headerEnd) {
+            requestValidity = false;
+            return;
+        }
+
+        headers = msg.substr(
+            headerStart,
+            headerEnd - headerStart
+        );
+
+        // ---- Body ----
+        if (headerEnd + 4 <= msg.size()) {
+            body = msg.substr(headerEnd + 4);
+        }
+        else {
+            body.clear();
+        }
     }
-    bool isEmpty(std::string msg)
-    {
+
+    bool isEmpty(const std::string& msg) const {
         return msg.empty();
     }
 };
