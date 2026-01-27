@@ -82,9 +82,6 @@ public:
             secondSpace - firstSpace - 1
         );
 
-        if (path == "/") path = "index.html";
-        else if (!path.empty() && path[0] == '/') path.erase(0, 1);
-
         // ---- HTTP version ----
         size_t httpPos = requestLine.find("HTTP/");
         if (httpPos == std::string::npos || httpPos + 8 > requestLine.size()) {
@@ -149,21 +146,34 @@ void threadedHandle(int clientSocket);
 
 HttpResponse BuildResponse(const HttpRequest& request) {
     HttpResponse res;
-
+    std::string path;
     if (!request.requestValidity) {
         res.status = "400";
         res.reason = "Bad Request";
+	return res;
     }
     else if (!request.expected) {
         res.status = "405";
         res.reason = "Method Not Allowed";
+	return res;
     }
-    else if (!fileExists(request.path)) {
+    //request is proper so we check if requested resource is a available
+    path = request.path;
+
+    //set home dir(empty path to index.html)
+    if (path == "/") path = "index.html";
+    else if (!path.empty() && path[0] == '/') path.erase(0, 1);
+
+    //If request path isn't htmp. append so we map resource names to proper files
+    if(path.find(".html")==std::string::npos){
+        path = path + ".html";
+    }
+    if (!fileExists(path)) {
         res.status = "404";
         res.reason = "Not Found";
     }
     else {
-        std::ifstream file(request.path);
+        std::ifstream file(path);
         std::stringstream buffer;
         buffer << file.rdbuf();
 
