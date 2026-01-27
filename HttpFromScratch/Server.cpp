@@ -11,6 +11,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <thread>
 
 #define PORT "80"
 const char serverAddr[] = "0.0.0.0";   // listen on all interfaces
@@ -205,6 +206,7 @@ int main() {
         perror("bind");
         return EXIT_FAILURE;
     }
+    freeaddrinfo(results)
 
     if (listen(listenSocket, SOMAXCONN) < 0) {
         perror("listen");
@@ -215,37 +217,49 @@ int main() {
 
     while (true) {
         int clientSocket = accept(listenSocket, nullptr, nullptr);
+
+
         if (clientSocket < 0) {
             perror("accept");
             continue;
         }
 
-        char buffer[4096];
-        std::string msg;
+        std::thread worker( threadHandle, clientSocket );
+        worker.detach();
 
-        while (true) {
-            ssize_t bytes = recv(clientSocket, buffer, sizeof(buffer), 0);
-            if (bytes <= 0) break;
-            msg.append(buffer, bytes);
-            if (msg.find("\r\n\r\n") != std::string::npos) break;
-        }
-
-        if (msg.empty())
-            continue;
-        HttpRequest request(msg);
-        HttpResponse response = BuildResponse(request);
-
-        std::string out = response.toString();
-        send(clientSocket, out.c_str(), out.size(), 0);
-
-        close(clientSocket);
+    
     }
 
     close(listenSocket);
-    freeaddrinfo(results);
     return 0;
 }
+void threadedHandle(int clientSocket)
+{
+    char buffer[4096];
+    std::string msg;
 
+    while (true) {
+        ssize_t bytes = recv(clientSocket, buffer, sizeof(buffer), 0);
+        if (bytes <= 0) break;
+        msg.append(buffer, bytes);
+        if (msg.find("\r\n\r\n") != std::string::npos) break;
+    }
+
+    if (msg.empty())
+    {
+        close(clientSocket);
+        return;
+    }
+
+    HttpRequest request(msg);
+    HttpResponse response = BuildResponse(request);
+
+    std::string out = response.toString();
+    send(clientSocket, out.c_str(), out.size(), 0);
+
+    close(clientSocket);
+    return;
+}
 
 
 /*
