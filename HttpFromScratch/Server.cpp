@@ -145,6 +145,7 @@ bool fileExists(const std::string& filename) {
     std::ifstream file(filename);
     return file.is_open();
 }
+void threadedHandle(int clientSocket);
 
 HttpResponse BuildResponse(const HttpRequest& request) {
     HttpResponse res;
@@ -206,7 +207,7 @@ int main() {
         perror("bind");
         return EXIT_FAILURE;
     }
-    freeaddrinfo(results)
+    freeaddrinfo(results);
 
     if (listen(listenSocket, SOMAXCONN) < 0) {
         perror("listen");
@@ -224,7 +225,7 @@ int main() {
             continue;
         }
 
-        std::thread worker( threadHandle, clientSocket );
+        std::thread worker( threadedHandle, clientSocket );
         worker.detach();
 
     
