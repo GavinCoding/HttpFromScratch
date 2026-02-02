@@ -24,8 +24,8 @@ Everything is intentionally kept simple and explicit so the control flow and dat
 
 * Written in **C++20**
 * Uses **POSIX sockets** directly (no libraries like Boost or frameworks)
-* Handles basic `GET` requests
 * Serves static files (e.g. `index.html`)
+* Integrates Multi-client concurrency
 * Proper HTTP response formatting
 * Runs as a standalone binary
 * Deployed on a **Raspberry Pi**
@@ -72,7 +72,6 @@ This is an actively maintained learning project. Future improvements may include
 
 * Better HTTP compliance
 * MIME type handling
-* Multi-client concurrency
 * Logging and error handling
 * Basic routing or templating
 
